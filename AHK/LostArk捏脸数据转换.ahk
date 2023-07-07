@@ -1,13 +1,13 @@
 /* 定义全局参数 */
-Version := "1.0" ; 版本号
+Version := "1.2" ; 版本号
 GUIWidth := 420 ; 窗体宽度
 GUIHeight := 400 ; 窗体高度
 Region := [
   " CHN - 国服", 
   " JPN - 日服", 
   " KOR - 韩服", 
-  " RUS - 俄服"
-  " USA - Steam",
+  " RUS - 俄服",
+  " USA - Steam"
 ] ; 服务器区域字串数组
 CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
 CusFileObj := unset ; 存放文件对象
@@ -26,7 +26,7 @@ for (i, name in PngNames) {
 }
     
 /* 窗体定义 开始 */
-MyGui := Gui(, "Lost Ark 捏脸数据工具 - v" . Version)
+MyGui := Gui(, "Lost Ark 捏脸数据转换工具 - v" . Version)
 MyGui.SetFont("s11")
 MyGui.OnEvent("Close", MyGuiClose) ; 关闭窗体时清理临时文件
 InnerWidth := GUIWidth - MyGui.MarginX * 2 ; 窗体内部的可用宽度
@@ -186,6 +186,7 @@ SaveCusFile(*) {
     str := SubStr(newMarkStr, A_Index, 1)
     newFileObj.WriteChar(Ord(str)) ; 将字符拆分后转换为数字写入文件
   }
+  newFileObj.Close()
   MsgBox("保存成功！")
   unlockControl()
 }
