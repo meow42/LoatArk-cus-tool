@@ -3,5 +3,6 @@
 *.zip
 *.rar
 
+.temp/
 cus/*
 img/*
