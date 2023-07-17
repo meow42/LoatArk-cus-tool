@@ -7,6 +7,7 @@ Region := [
   " JPN - 日服", 
   " KOR - 韩服", 
   " RUS - 俄服",
+  " TWN - 台服",
   " USA - Steam"
 ] ; 服务器区域字串数组
 CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串

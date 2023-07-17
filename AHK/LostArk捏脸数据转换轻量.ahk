@@ -1,5 +1,5 @@
 /* 定义全局参数 */
-Version := "1.3" ; 版本号
+Version := "1.4" ; 版本号
 GUIWidth := 420 ; 窗体宽度
 GUIHeight := 150 ; 窗体高度
 Region := [
@@ -7,6 +7,7 @@ Region := [
   " JPN - 日服", 
   " KOR - 韩服", 
   " RUS - 俄服",
+  " TWN - 台服",
   " USA - Steam"
 ] ; 服务器区域字串数组
 CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
@@ -197,11 +198,6 @@ update() {
   ;MsgBox("update()`n")
 }
 
-
-/* 打开双双QQ群邀请链接 */
-OpenFYSSqunURL(*) {
-  Run("http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=3GSAPSQ-SqVEKc_REd_JsfuFa7fXo9my&authKey=sQUhTxiPv16iDXe0KhdXulImeB70Qh2gYd8PeybS5DyI2pYeGMNwo%2B9dYOhYYdfR&noverify=0&group_code=534598953")
-}
 
 /* 打开闪闪QQ群邀请链接 */
 OpenMSSqunURL(*) {
