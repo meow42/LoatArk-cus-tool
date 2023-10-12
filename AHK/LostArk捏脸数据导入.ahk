@@ -1,25 +1,25 @@
 /* 定义全局参数 */
-Version := "1.1" ; 版本号
+Version := "1.3" ; 版本号
 GUIWidth := 428 ; 窗体宽度
 GUIHeight := 268 ; 窗体高度
 CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
-Region := [" CHN - 国服", " JPN - 日服", " KOR - 韩服", " RUS - 俄服", " USA - Steam"] ; 服务器区域字串数组
-RegionRegKey := ["命运方舟", "", "", "", ""] ; 各服务器在注册表中的目录名
+Region := [" CHN - 国服", " JPN - 日服", " KOR - 韩服", " RUS - 俄服", " TWN - 台服", " USA - Steam"] ; 服务器区域字串数组
+RegionRegKey := ["命运方舟", "", "", "", "", ""] ; 各服务器在注册表中的目录名（已放弃支持其他区服功能）
 ClassStr := Map()
-ClassStr["en"] := ["Warrior", "Fighter", "Hunter", "Magician", "Specialist"]
-ClassStr["CHN"] := [" 战士（男）", " 格斗（女）", " 射手（男）", " 魔法师", " 术士（萝）"]
+ClassStr["file"] := ["Warrior", "Fighter", "Hunter", "Magician", "Specialist", "Delain", "Warrior_Female", "Hunter_Female", "Fighter_Male"] ; 
+ClassStr["CHN"] := [" 战士（男）", " 格斗（女）", " 射手（男）", " 魔法师", " 术师", " 潜伏者", "战士（女）", "射手（女）", "格斗（男）"] ; 
 ClassIndex := 0
 IsFileReady := false ; 是否已选取合法cus文件
 IsDirReady := false ; 是否已选取目录
     
 /* 窗体定义 开始 */
-MyGui := Gui(, "Lost Ark 捏脸数据导入工具 - v" . Version)
+MyGui := Gui(, "命运方舟捏脸数据导入工具 - v" . Version)
 MyGui.SetFont("s11")
 MyGui.OnEvent("Close", MyGuiClose) ; 关闭窗体时清理临时文件
 InnerWidth := GUIWidth - MyGui.MarginX * 2 ; 窗体内部的可用宽度
 
 ; 文件选取区域 
-MyGui.AddGroupBox("Section xm y12 h82 w" InnerWidth , "步骤一：选择捏脸数据文件")
+MyGui.AddGroupBox("Section xm y18 h82 w" InnerWidth , "步骤一：选择捏脸数据文件")
 CusFileText := MyGui.AddEdit(
   "ReadOnly -tabstop r1 xs+8 ys+22 w" InnerWidth - 16 - 80 - 6, ""
 )
@@ -39,7 +39,7 @@ CusClassList := MyGui.AddDropDownList(
 )
 
 ; 数据栏位区域
-MyGui.AddGroupBox("Section xm ys+94 h128 w" InnerWidth, "步骤二：放入自定义栏位")
+MyGui.AddGroupBox("Section xm ys+94 h118 w" InnerWidth, "步骤二：放入自定义栏位")
 SlotBtn := Map()
 loop 6 {
   xyStr := (A_Index = 1) ? "xs+8 ys+22" : "x+6 yp"
@@ -50,13 +50,11 @@ loop 6 {
   SlotBtn[A_Index].OnEvent("Click", SoltBtnClick)
 }
 
-; 目录选取与变更
-MyGui.SetFont("s10 c666666")
-DirStateTip := MyGui.AddText("right xs+8 y+22 w180", "当前目标文件夹为：")
-DirRegionList := MyGui.AddDropDownList(
-  "Choose1 x+0 yp-4 w120", Region
-)
-DirOpenBtn := MyGui.AddButton("Default -tabstop w80 h23 x+4 yp-1", "打开目录")
+; 附加选项与功能
+MyGui.SetFont("c666666")
+DirStateTip := MyGui.AddText("right xs+8 y+14 w249", "如栏位不可用，请手动处理 =>")
+DirRegionList := MyGui.AddDropDownList("Hidden Choose1 x+0 yp-4 w5", Region)  ; 已放弃区服选择功能，但此控价需保留
+DirOpenBtn := MyGui.AddButton("Default w125 h23 x+5 yp-1", "打开数据文件夹")
 DirOpenBtn.OnEvent("Click", OpenSelectDir)
 ; 目录位置
 CusDirText := MyGui.AddEdit(
@@ -65,23 +63,17 @@ CusDirText := MyGui.AddEdit(
 
 ; 底部信息
 MyGui.SetFont("s10 c888888")
-ExpCheckBox := MyGui.AddCheckBox("Disabled -tabstop w108 xs ym+" (GUIHeight - 26), "启用EXP模式")
-ExpCheckBox.OnEvent("Click", UpdateState)
-QunText := MyGui.AddText(
-  "right x+0 ym+" (GUIHeight - 26) " w" InnerWidth - 108, 
-  "如需帮助，请加QQ群：866731880"
+MyGui.AddLink(
+  "right xs ym+" (GUIHeight - 26) " w" InnerWidth, 
+  '本工具由B站UP主<a href="https://space.bilibili.com/18422589">@喵闪闪嗷呜一声</a>定制，' .
+  '如需帮助请访问<a href="https://gitee.com/meowshanshan/lostark-cus-tool">项目Git仓库</a>'
 )
-QunText.OnEvent("DoubleClick", OpenMSSqunURL)
-
 
 ; 显示窗体
 MyGui.Show("w" . GUIWidth . " h" . GUIHeight)
 CusFileBtn.Focus()
-LocateCusDir(true) ; 临时处理
+LocateCusDir(true) ; 定位捏脸数据文件目录
 UpdateState()
-
-
-
 
 /* 窗体定义 结束 */
 
@@ -95,13 +87,13 @@ UpdateState(*) {
   CusRegionLabel.Visible := IsFileReady
 
   CusRegionList.Visible := IsFileReady
-  CusRegionList.Enabled := ExpCheckBox.Value
+  CusRegionList.Enabled := false ; ExpCheckBox.Value
   CusClassList.Visible := IsFileReady
-  CusClassList.Enabled := ExpCheckBox.Value
+  CusClassList.Enabled := false ; ExpCheckBox.Value
   
   ; 文件放置
   DirOpenBtn.Enabled := IsDirReady
-  DirRegionList.Enabled := ExpCheckBox.Value
+  DirRegionList.Enabled := false ; ExpCheckBox.Value
 }
 
 /* 栏位按钮点击事件 */
@@ -116,11 +108,8 @@ DropFileEvent(guiObj, guiCtrlObj, fileArray, x, y) {
   global
   if (CusFileBtn.Enabled) {
     CheckCusFile(fileArray[1])
-    ; 高级模式未开启时，自动选取目录
-    if (!ExpCheckBox.Value) {
-      dir := LocateCusDir(true)
-      UpdateSlotState()
-    }
+    dir := LocateCusDir(true)
+    UpdateSlotState()
   }
   UpdateState()
 }
@@ -133,10 +122,8 @@ SelectCusFileEvent(*) {
   )
   CheckCusFile(selectedFileURL)
   ; 高级模式未开启时，自动选取目录
-  if (!ExpCheckBox.Value) {
-    dir := LocateCusDir(true)
-    UpdateSlotState()
-  }
+  dir := LocateCusDir(true)
+  UpdateSlotState()
   UpdateState()
 }
 
@@ -184,10 +171,11 @@ CheckCusFile(selectedFileURL := "") {
     ; 显示文件路径
     CusFileText.Value := selectedFileURL
     ; 显示文件职业分类
-    fileName := RegExReplace(selectedFileURL, "(.*)\\", "")
-    className := StrSplit(fileName, "_")[2]
+    fileName := RegExReplace(selectedFileURL, "(.*)\\")
+    className := RegExReplace(fileName, "i)Customizing_") ; 掐头
+    className := RegExReplace(className, "i)_slot(.*)") ; 去尾
     
-    for i, str in ClassStr["en"] {
+    for i, str in ClassStr["file"] {
       if (str = className) {
         ClassIndex := i
         break
@@ -214,23 +202,6 @@ CheckCusFile(selectedFileURL := "") {
   }
   
 }
-
-/* 根据文件名称选择职业分类 
-ChooseClassByName(className) {
-  classIndex := 0
-  for i, str in ClassStr["en"] {
-    if (str = className) {
-      classIndex := i
-      break
-    }
-  }
-  CusClassList.Choose(classIndex) ; 自动填充职业选项
-  ; 临时处理，给出职业识别失败提示
-  if (classIndex = 0) {
-    MsgBox("职业类型识别失败`n（目前是通过文件名识别职业）", "提示") 
-  }
-}
-*/
 
 /* 打开选定的目录 */
 OpenSelectDir(*) {
@@ -300,7 +271,7 @@ UpdateSlotState(*) {
   }
   ; 检测栏位
   loop 6 {
-    path := CusDirText.Value "\Customizing_" ClassStr["en"][ClassIndex] "_slot" A_Index - 1 ".cus"
+    path := CusDirText.Value "\Customizing_" ClassStr["file"][ClassIndex] "_slot" A_Index - 1 ".cus"
     SlotBtn[A_Index].Enabled := FileExist(path) ? false : true
     ;MsgBox(path " : " SlotBtn[A_Index].Enable)
   }
@@ -310,7 +281,7 @@ UpdateSlotState(*) {
 /* 放入捏脸数据 */
 PutCusFile(slotIndex) {
   global
-  newFilePath := CusDirText.Value "\Customizing_" ClassStr["en"][ClassIndex] "_slot" slotIndex ".cus"
+  newFilePath := CusDirText.Value "\Customizing_" ClassStr["file"][ClassIndex] "_slot" slotIndex ".cus"
   try {
     FileCopy(CusFileText.Value, newFilePath, true)
     ; 如果不是目标区服数据，则进行标识符转换
@@ -335,19 +306,4 @@ PutCusFile(slotIndex) {
 MyGuiClose(*) {
   global
   
-}
-
-/* 打开闪闪QQ群邀请链接 */
-OpenMSSqunURL(*) {
-  Run("https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=1DEDfSbHvsrlre_RxWarQdnEgkFpr7qH&authKey=%2F0eG18q8%2BPXoBVEmaeyo6gSla30TVXugDqejekbVAdXr6i1Ets9XogIo%2F7NLT4Zz&noverify=0&group_code=866731880")
-}
-
-/* 打开闪闪B站链接 */
-OpenBiliURL(*) {
-  Run("https://b23.tv/JSHvl6u")
-}
-
-/* 打开GitHub仓库 */
-OpenGitHubURL(*) {
-  Run("https://github.com/meow42/LoatArk-cus-tool.git")
 }
