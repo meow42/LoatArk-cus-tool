@@ -1,8 +1,8 @@
 # Lost Ark 捏脸数据工具
 
-此工具由B站主播[喵闪闪嗷呜一声](https://b23.tv/JSHvl6u)定制  
-
-> 使用[AutoHotkey v2](https://www.autohotkey.com/)制作
+此工具由B站主播[喵闪闪嗷呜一声](https://space.bilibili.com/18422589)定制  
+国内仓库地址：https://gitee.com/meowshanshan/lostark-cus-tool  
+> 使用[AutoHotkey v2](https://www.autohotkey.com/)制作  
 
 
 ## 导入工具版本日志
