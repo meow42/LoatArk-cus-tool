@@ -3,6 +3,7 @@
 *.zip
 *.rar
 
+.vscode/
 .temp/
 cus/*
 img/*
