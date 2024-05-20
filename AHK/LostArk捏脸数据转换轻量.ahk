@@ -1,7 +1,7 @@
 /* 定义全局参数 */
-Version := "1.4" ; 版本号
+Version := "1.5" ; 版本号
 GUIWidth := 420 ; 窗体宽度
-GUIHeight := 150 ; 窗体高度
+GUIHeight := 142 ; 窗体高度
 Region := [
   " CHN - 国服", 
   " JPN - 日服", 
@@ -13,12 +13,11 @@ Region := [
 CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
 CusFileObj := unset ; 存放文件对象
 IsFileReady := false ; 是否已选取合法文件
-IsTempDirCreated := false ; 是否创建过临时目录
 
 
     
 /* 窗体定义 开始 */
-MyGui := Gui(, "Lost Ark 捏脸数据转换工具 - v" . Version)
+MyGui := Gui(, "LostArk 捏脸数据转换工具 - v" . Version)
 MyGui.SetFont("s11")
 InnerWidth := GUIWidth - MyGui.MarginX * 2 ; 窗体内部的可用宽度
 
@@ -62,12 +61,13 @@ ConvertBtn.OnEvent("Click", SaveCusFile)
 
 
 ; 底部信息
-MyGui.SetFont("s10")
-QunText := MyGui.AddText(
-  "right c666666 xm ym+" (GUIHeight - 24) " w" InnerWidth, 
-  "如需帮助，请加QQ群：866731880"
+MyGui.SetFont("s9")
+MyGui.AddLink(
+  "right xs ym+" (GUIHeight - 26) " w" InnerWidth, 
+  '本工具由B站UP主<a href="https://space.bilibili.com/18422589">@喵闪闪嗷呜一声</a>定制，' .
+  '更多信息请访问<a href="https://gitee.com/meowshanshan/lostark-cus-converter">项目Git仓库</a>'
 )
-QunText.OnEvent("DoubleClick", OpenMSSqunURL)
+
 
 ; 显示窗体
 update()
@@ -197,20 +197,3 @@ update() {
 
   ;MsgBox("update()`n")
 }
-
-
-/* 打开闪闪QQ群邀请链接 */
-OpenMSSqunURL(*) {
-  Run("https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=1DEDfSbHvsrlre_RxWarQdnEgkFpr7qH&authKey=%2F0eG18q8%2BPXoBVEmaeyo6gSla30TVXugDqejekbVAdXr6i1Ets9XogIo%2F7NLT4Zz&noverify=0&group_code=866731880")
-}
-
-/* 打开闪闪B站链接 */
-OpenBiliURL(*) {
-  Run("https://b23.tv/JSHvl6u")
-}
-
-/* 打开GitHub仓库 */
-OpenGitHubURL(*) {
-  Run("https://github.com/meow42/LoatArk-cus-tool.git")
-}
-
