@@ -1,5 +1,5 @@
 /* 定义全局参数 */
-Version := "1.5" ; 版本号
+Version := "1.6" ; 版本号
 GUIWidth := 420 ; 窗体宽度
 GUIHeight := 142 ; 窗体高度
 Region := [
@@ -10,7 +10,6 @@ Region := [
   " TWN - 台服",
   " USA - Steam"
 ] ; 服务器区域字串数组
-CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
 CusFileObj := unset ; 存放文件对象
 IsFileReady := false ; 是否已选取合法文件
 
@@ -104,18 +103,8 @@ CheckCusFile(selectedFileURL := "") {
   IsFileReady := false
   CusFileObj := unset
   
-  ; 读取文件头和区服标识符
+  ; 读取文件
   CusFileObj := FileOpen(selectedFileURL, "r", "UTF-8")
-
-  cusHeadStr := ""
-  loop 8 {
-    cusHeadStr .= String(CusFileObj.ReadChar())
-  }
-  if (cusHeadStr != CusHeadNum2Str) {
-    MsgBox "读取失败：文件类型不匹配", "提示"
-    update()
-    return
-  }
 
   ; 匹配对应的标识符
   RegionBeforeList.Choose(0) ; 重置选项

@@ -1,8 +1,7 @@
 /* 定义全局参数 */
-Version := "1.3" ; 版本号
+Version := "1.6" ; 版本号
 GUIWidth := 428 ; 窗体宽度
 GUIHeight := 268 ; 窗体高度
-CusHeadNum2Str := "30-1-13000" ; 捏脸文件头转字符串
 Region := [" CHN - 国服", " JPN - 日服", " KOR - 韩服", " RUS - 俄服", " TWN - 台服", " USA - Steam"] ; 服务器区域字串数组
 RegionRegKey := ["命运方舟", "", "", "", "", ""] ; 各服务器在注册表中的目录名（已放弃支持其他区服功能）
 ClassStr := Map()
@@ -141,14 +140,6 @@ CheckCusFile(selectedFileURL := "") {
   cusFileObj := false
   try {
     cusFileObj := FileOpen(selectedFileURL, "r", "UTF-8")
-    ; 识别文件头
-    cusHeadStr := ""
-    loop 8 {
-      cusHeadStr .= String(CusFileObj.ReadChar())
-    }
-    if (cusHeadStr != CusHeadNum2Str) {
-      throw Error("文件类型不匹配")
-    }
     ; 识别区服标识符
     cusFileObj.Pos := 8 ; 设定指针偏移
     cusMarkStr := cusFileObj.Read(3) ; 获取标识符字串
